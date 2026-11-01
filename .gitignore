@@ -1,0 +1,28 @@
+*.iml
+.gradle
+.kotlin
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+.env
+debug.keystore
+
+# Keep local Firebase and signing credentials out of source submissions.
+**/google-services.json
+**/.env
+!**/.env.example
+**/*.jks
+**/*.keystore
+
+# Keep local continuity notes out of public submissions.
+HACKATHON_CHECKPOINT.md

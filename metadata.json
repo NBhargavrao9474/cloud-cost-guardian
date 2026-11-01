@@ -1,0 +1,5 @@
+{
+  "name": "Cloud Cost Guardian",
+  "description": "Android app for reviewing live Google Cloud Compute Engine inventory with user-approved read-only access. It highlights resources for human review without querying billing, estimating savings, seeding sample data, or modifying cloud resources. Optional Gemini explanations require Firebase configuration.",
+  "requestFramePermissions": []
+}
