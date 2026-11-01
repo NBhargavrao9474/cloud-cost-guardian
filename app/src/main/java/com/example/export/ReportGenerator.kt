@@ -10,11 +10,12 @@ import java.util.Locale
 
 object ReportGenerator {
     fun generateMarkdownReport(summary: ScanSummary, findings: List<Finding>): String {
+        val isDemo = summary.status == "illustrative_demo"
         val scanDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(Date(summary.startedAt))
         return buildString {
-            appendLine("# Cloud Cost Guardian — GCP Inventory Review")
+            appendLine(if (isDemo) "# Cloud Cost Guardian — ILLUSTRATIVE DEMO ONLY" else "# Cloud Cost Guardian — GCP Inventory Review")
             appendLine()
-            appendLine("> Live, read-only Compute Engine inventory. No cloud resources were modified. Billing data was not requested, so this report contains no verified costs or savings.")
+            appendLine(if (isDemo) "> Synthetic presentation example only. This is not a live GCP scan and describes no real cloud resources." else "> Live, read-only Compute Engine inventory. No cloud resources were modified. Billing data was not requested, so this report contains no verified costs or savings.")
             appendLine()
             appendLine("**Project:** `${summary.projectName}`  ")
             appendLine("**Scan date:** $scanDate  ")
@@ -42,7 +43,7 @@ object ReportGenerator {
                 appendLine()
             }
             appendLine("---")
-            appendLine("*Generated from live GCP Compute Engine inventory. Costs, savings, ownership, and resource intent are not verified by this app.*")
+            appendLine(if (isDemo) "*Illustrative synthetic data only. Not generated from live GCP inventory.*" else "*Generated from live GCP Compute Engine inventory. Costs, savings, ownership, and resource intent are not verified by this app.*")
         }
     }
 
@@ -55,14 +56,14 @@ object ReportGenerator {
         context.startActivity(Intent.createChooser(sendIntent, chooserTitle))
     }
 
-    fun shareInventorySummary(context: Context, projectName: String, findings: List<Finding>) {
+    fun shareInventorySummary(context: Context, projectName: String, findings: List<Finding>, isDemo: Boolean = false) {
         val counts = findings.groupingBy { it.type.replace('_', ' ') }.eachCount()
         val text = buildString {
-            appendLine("Cloud Cost Guardian · GCP inventory review")
+            appendLine(if (isDemo) "Cloud Cost Guardian · ILLUSTRATIVE DEMO ONLY" else "Cloud Cost Guardian · GCP inventory review")
             appendLine("Project: $projectName")
-            appendLine("Live read-only inventory · ${findings.size} resources for review")
+            appendLine(if (isDemo) "Fictional examples · ${findings.size} review signals · not a live scan" else "Live read-only inventory · ${findings.size} resources for review")
             counts.forEach { (type, count) -> appendLine("• $type: $count") }
-            appendLine("No resources were modified. Billing data was not accessed; costs and savings are unavailable.")
+            appendLine(if (isDemo) "Synthetic data only. No cloud project was scanned or changed; no cost or savings is represented." else "No resources were modified. Billing data was not accessed; costs and savings are unavailable.")
         }
         shareReport(context, text, "GCP inventory review: $projectName", "Share inventory review")
     }

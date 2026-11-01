@@ -12,7 +12,7 @@
 
 The APK is a debug-signed hackathon build for direct Android installation. It was installed and launched on a physical Android 16 phone and an Android 16 emulator. Android will ask you to approve installing an app downloaded from your browser or file manager.
 
-> **Live-scan requirement:** this repository has no connected Google Cloud project or OAuth client. You can install and explore the app, but a real scan requires a Google Cloud project configured by the tester. The app starts empty and does not show fabricated resources.
+> **Live-scan requirement:** this repository has no connected Google Cloud project or OAuth client. Live mode starts empty and shows only resources returned by a real scan. For a presentation without a cloud project, tap **Try illustrative demo data**; the app labels those fictional examples and keeps them out of live scan history.
 
 ## Hackathon overview
 
@@ -59,10 +59,10 @@ The app does not read Cloud Billing data, Cloud Monitoring metrics, or Recommend
 ## Demo flow
 
 1. Open the app and show that no findings are invented before a scan.
-2. Explain that a live scan requires a tester-provided Google Cloud project and explicit read-only access.
-3. Walk through the three inventory checks and the evidence shown for each finding.
-4. Show local scan history and the shareable report flow.
-5. If no sandbox project is available, explain the live-scan limitation rather than presenting sample data as real.
+2. If no GCP sandbox is available, tap **Try illustrative demo data** and point out the persistent demo-only banner.
+3. Open findings, use search and severity filters, view the summary charts, and show the detail/evidence panel.
+4. Open sharing/export and point out that the generated report is labeled illustrative demo data.
+5. Exit demo mode to return to the empty live state. Explain that real scans require a tester-provided GCP project and explicit read-only access.
 
 See [HACKATHON_SUBMISSION.md](HACKATHON_SUBMISSION.md) for a copy-ready project pitch and [the demo walkthrough](docs/DEMO_WALKTHROUGH.md) for an explicitly fictional example and presenter talk track.
 

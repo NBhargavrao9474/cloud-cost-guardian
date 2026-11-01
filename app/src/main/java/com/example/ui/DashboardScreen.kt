@@ -39,6 +39,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -141,6 +142,7 @@ fun DashboardScreen(
                     Column(Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
                         Text(
                             when {
+                                uiState.isDemoMode -> "ILLUSTRATIVE DEMO DATA · NOT A LIVE SCAN"
                                 !uiState.hasScanResults -> "NO CLOUD DATA YET"
                                 uiState.isSavedScan -> "SAVED GCP INVENTORY"
                                 else -> "LIVE GCP INVENTORY"
@@ -150,6 +152,7 @@ fun DashboardScreen(
                         )
                         Text(
                             when {
+                                uiState.isDemoMode -> "Fictional examples for judging. These findings are not from Google Cloud and are not saved to scan history."
                                 !uiState.hasScanResults -> "Connect your Google Cloud project to inspect its Compute Engine resources. No inventory has been loaded."
                                 uiState.isSavedScan -> "These are saved read-only inventory results and may be out of date. Run a fresh scan to update them."
                                 else -> "Retrieved from Compute Engine with read-only access. Billing APIs are not accessed; no cost or savings figures are reported."
@@ -171,6 +174,20 @@ fun DashboardScreen(
                         else onAuthorizeGcp(uiState.projectName)
                     }
                 )
+            }
+
+            item {
+                if (uiState.isDemoMode) {
+                    TextButton(
+                        onClick = viewModel::exitIllustrativeDemo,
+                        modifier = Modifier.fillMaxWidth().testTag("exit_illustrative_demo_button")
+                    ) { Text("Exit demo and return to live mode") }
+                } else if (!uiState.hasScanResults) {
+                    TextButton(
+                        onClick = viewModel::loadIllustrativeDemo,
+                        modifier = Modifier.fillMaxWidth().testTag("load_illustrative_demo_button")
+                    ) { Text("Try illustrative demo data") }
+                }
             }
 
             if (uiState.scanHistory.isNotEmpty()) {
@@ -268,7 +285,8 @@ fun DashboardScreen(
         ShareableAuditCardDialog(
             projectName = uiState.projectName,
             findings = uiState.findings,
-            onDismiss = { viewModel.toggleShareDialog(false) }
+            onDismiss = { viewModel.toggleShareDialog(false) },
+            isDemoMode = uiState.isDemoMode
         )
     }
     if (uiState.showProjectDialog) {

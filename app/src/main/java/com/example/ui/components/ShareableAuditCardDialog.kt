@@ -40,7 +40,8 @@ import com.example.ui.theme.FinOpsEmeraldPrimary
 fun ShareableAuditCardDialog(
     projectName: String,
     findings: List<Finding>,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    isDemoMode: Boolean = false
 ) {
     val context = LocalContext.current
     Dialog(onDismissRequest = onDismiss) {
@@ -49,16 +50,16 @@ fun ShareableAuditCardDialog(
             Column(modifier = Modifier.padding(20.dp)) {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically) {
-                    Text("GCP inventory review", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    Text(if (isDemoMode) "Illustrative demo review" else "GCP inventory review", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     IconButton(onClick = onDismiss) { Icon(Icons.Default.Close, contentDescription = "Close") }
                 }
                 Text("$projectName · ${findings.size} resources for review",
                     style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(Modifier.height(12.dp))
-                Text("Live, read-only Compute Engine inventory. Billing data is not connected, so this report has no verified cost or savings figures.",
+                Text(if (isDemoMode) "Fictional demo examples only. No cloud project was scanned; these are not real findings." else "Live, read-only Compute Engine inventory. Billing data is not connected, so this report has no verified cost or savings figures.",
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(Modifier.height(20.dp))
-                Button(onClick = { ReportGenerator.shareInventorySummary(context, projectName, findings) },
+                Button(onClick = { ReportGenerator.shareInventorySummary(context, projectName, findings, isDemoMode) },
                     colors = ButtonDefaults.buttonColors(containerColor = FinOpsEmeraldPrimary),
                     modifier = Modifier.fillMaxWidth().testTag("share_summary_button")) {
                     Icon(Icons.Default.Share, contentDescription = null)
@@ -70,7 +71,7 @@ fun ShareableAuditCardDialog(
                     val summary = ScanSummary(
                         scanId = "inventory-export",
                         projectName = projectName,
-                        status = "live_gcp_read_only",
+                        status = if (isDemoMode) "illustrative_demo" else "live_gcp_read_only",
                         startedAt = System.currentTimeMillis(),
                         findingsCount = findings.size
                     )

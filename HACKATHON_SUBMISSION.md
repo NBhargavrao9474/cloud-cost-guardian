@@ -21,7 +21,7 @@ Cloud Cost Guardian reviews Compute Engine disks, external IP addresses, and VM 
 
 ## Demo status
 
-The APK was tested on a physical phone and emulator; see [the verification record](docs/TESTING.md). A live GCP scan is not demonstrated because this submission has no connected cloud project or OAuth client. The app does not access billing data or compute actual costs and savings. Do not claim a tested Gemma 4 feature; this prototype is not a Gemma 4 implementation.
+The APK was tested on a physical phone and emulator; see [the verification record](docs/TESTING.md). The app has an opt-in illustrative demo mode for judges, visibly labeled as synthetic and kept out of live scan history. A live GCP scan is not demonstrated because this submission has no connected cloud project or OAuth client. The app does not access billing data or compute actual costs and savings. Do not claim a tested Gemma 4 feature; this prototype is not a Gemma 4 implementation.
 
 ## Short pitch
 

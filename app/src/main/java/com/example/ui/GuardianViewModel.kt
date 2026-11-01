@@ -36,7 +36,8 @@ data class GuardianUiState(
     val showShareDialog: Boolean = false,
     val showProjectDialog: Boolean = false,
     val isAiLoadingFindingId: String? = null,
-    val toastMessage: String? = null
+    val toastMessage: String? = null,
+    val isDemoMode: Boolean = false
 ) {
     val filteredFindings: List<Finding>
         get() = findings.filter { finding ->
@@ -75,6 +76,9 @@ class GuardianViewModel(application: Application) : AndroidViewModel(application
                 it.copy(
                     scanStatus = ScanStatus.SCANNING,
                     projectName = projectId,
+                    isDemoMode = false,
+                    findings = emptyList(),
+                    hasScanResults = false,
                     terminalLogs = emptyList(),
                     isSavedScan = false
                 )
@@ -119,6 +123,7 @@ class GuardianViewModel(application: Application) : AndroidViewModel(application
             _uiState.update {
                 it.copy(
                     projectName = summary.projectName,
+                    isDemoMode = false,
                     findings = findings,
                     hasScanResults = true,
                     isSavedScan = true,
@@ -131,6 +136,35 @@ class GuardianViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun setSeverityFilter(severity: Severity?) = _uiState.update { it.copy(severityFilter = severity) }
+    fun loadIllustrativeDemo() = _uiState.update {
+        it.copy(
+            projectName = "ILLUSTRATIVE DEMO · NOT LIVE GCP",
+            findings = DemoFindings.items,
+            hasScanResults = true,
+            isSavedScan = false,
+            isDemoMode = true,
+            scanStatus = ScanStatus.COMPLETED,
+            severityFilter = null,
+            searchQuery = "",
+            terminalLogs = emptyList(),
+            selectedFinding = null,
+            toastMessage = "Illustrative demo data loaded. No cloud project was scanned or changed."
+        )
+    }
+    fun exitIllustrativeDemo() = _uiState.update {
+        it.copy(
+            projectName = "",
+            findings = emptyList(),
+            hasScanResults = false,
+            isSavedScan = false,
+            isDemoMode = false,
+            scanStatus = ScanStatus.IDLE,
+            severityFilter = null,
+            searchQuery = "",
+            selectedFinding = null,
+            showShareDialog = false
+        )
+    }
     fun setSearchQuery(query: String) = _uiState.update { it.copy(searchQuery = query) }
     fun selectFinding(finding: Finding?) = _uiState.update { it.copy(selectedFinding = finding) }
     fun toggleShareDialog(show: Boolean) = _uiState.update { it.copy(showShareDialog = show) }
@@ -140,6 +174,7 @@ class GuardianViewModel(application: Application) : AndroidViewModel(application
             projectName = "",
             findings = emptyList(),
             hasScanResults = false,
+            isDemoMode = false,
             isSavedScan = false,
             scanStatus = ScanStatus.IDLE,
             terminalLogs = emptyList(),
