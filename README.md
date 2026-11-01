@@ -24,14 +24,33 @@ Cloud resources can be left behind after experiments and deployments. Teams need
 
 Cloud Cost Guardian uses read-only Compute Engine inventory to surface a small set of review signals. Each finding includes the observed resource evidence and a read-only inspection command. A person remains responsible for checking ownership and dependencies before taking any action.
 
-### What works today
+### Current features
 
-- Connects to Google Cloud with the `compute.readonly` OAuth scope.
-- Lists Compute Engine disks, reserved external IP addresses, and VM instances through paginated aggregate APIs.
-- Flags unattached `READY` disks, unassigned reserved external IPs, and terminated VMs that still have persistent disks attached.
-- Shows the evidence behind a finding and copyable `gcloud` describe commands; the app never executes the commands.
-- Searches and filters findings, saves scan history locally, and shares inventory reports.
-- Provides deterministic offline guidance. Optional hosted Gemini explanations need separate Firebase configuration.
+1. **Read-only Google Cloud connection.** The user enters a project ID, signs in with Google, and approves the Compute Engine `compute.readonly` scope. OAuth access tokens are held in memory during the scan.
+2. **Live inventory collection.** The app lists disks, reserved external IP addresses, and VM instances with paginated Compute Engine aggregate APIs.
+3. **Transparent review findings.** It flags an unattached `READY` disk with a non-zero size, an unassigned reserved external IP address, or a terminated VM that still has persistent disks attached. Each finding shows the observed inventory evidence and why a human should review it.
+4. **Safer next steps.** Findings include a copyable read-only `gcloud` describe command. The app does not execute commands or make changes to cloud resources.
+5. **Useful follow-up tools.** Search and severity filters help focus the list; scan history is stored locally; charts summarize returned findings; a report can be shared.
+6. **Offline guidance.** Deterministic guidance works without an AI service. A user may request an optional hosted Gemini explanation after the owner configures Firebase AI Logic. That hosted integration is not configured or verified in this submission.
+
+### Illustrative example: what a scan could show
+
+The following fictional inventory is a documentation example only. **It is not stored in the APK, does not appear in the app, and was not scanned from Google Cloud.** It shows how the current rules would interpret matching live inventory:
+
+| Fictional resource | Illustrative inventory evidence | Possible app finding | What the user should check |
+| --- | --- | --- | --- |
+| `temp-build-cache-01` disk in `us-central1-a` | `READY`, 100 GiB, no attached instances | Unattached disk (medium severity) | Check owner, snapshots, retention needs, and dependencies. |
+| `demo-reserved-ip` address | External, `RESERVED`, no assigned instance; example address `203.0.113.27` | Unassigned reserved external IP (low severity) | Confirm it is not reserved for a planned service before releasing it. |
+| `retired-api-test` VM in `us-central1-a` | `TERMINATED`, one attached persistent disk | Terminated VM retaining a persistent disk (low severity) | Review the VM and disk ownership and lifecycle. |
+
+The app would show evidence and a read-only inspection command for a finding. It would **not** calculate a dollar amount or tell the user that deletion is safe. The example values above are not valid proof of a real finding. See [the demo walkthrough](docs/DEMO_WALKTHROUGH.md) for a presenter-ready script.
+
+### How it helps
+
+- **Finds review candidates faster:** brings a few easy-to-miss inventory conditions into one view.
+- **Makes the signal explainable:** shows the resource status and attachment evidence behind each flag.
+- **Reduces risky guesswork:** keeps access read-only and leaves ownership checks and any cleanup decision to a person.
+- **Helps teams communicate:** local history and shareable reports make scan results easier to review together.
 
 ### What it does not claim
 
@@ -45,7 +64,7 @@ The app does not read Cloud Billing data, Cloud Monitoring metrics, or Recommend
 4. Show local scan history and the shareable report flow.
 5. If no sandbox project is available, explain the live-scan limitation rather than presenting sample data as real.
 
-See [HACKATHON_SUBMISSION.md](HACKATHON_SUBMISSION.md) for a copy-ready project pitch and demo talk track.
+See [HACKATHON_SUBMISSION.md](HACKATHON_SUBMISSION.md) for a copy-ready project pitch and [the demo walkthrough](docs/DEMO_WALKTHROUGH.md) for an explicitly fictional example and presenter talk track.
 
 ## Architecture
 
